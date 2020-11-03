@@ -16,11 +16,12 @@ def main():
 def run(user, token, out):
     gh = Github(user, token)
     repos = gh.user_repos()
-    for r in repos[:2]:
+    i = 1
+    for r in repos:
         name = r['full_name']
         url = r['clone_url']
 
-        print('Processing repository', name)
+        print('%d/%d' % (i, len(repos)), 'Processing repository', name)
         built_url = build_url(url, user, token)
 
         folder = os.path.join(os.path.abspath(out), name)
@@ -30,7 +31,8 @@ def run(user, token, out):
         else:
             print('Folder', folder, 'does not exist')
             run_clone(built_url, folder, out)
-        print('\n')
+        print('%d/%d' % (i, len(repos)), 'Finished processing repository', name, '\n')
+        i += 1
 
 def build_url(url, user, token):
     return url.replace('https://', 'https://%s:%s@' % (user, token))
