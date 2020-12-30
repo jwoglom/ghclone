@@ -47,17 +47,17 @@ def run_clone(url, folder, base_folder):
     p.wait()
 
 class Github:
-    USER_REPOS_URL = 'https://api.github.com/users/%s/repos'
+    USER_REPOS_URL = 'https://api.github.com/user/repos'
     def __init__(self, user, token):
         self.user = user
         self.token = token
 
-    def user_repos(self, user=None):
+    def user_repos(self, repotype='owner'):
         output = []
-        base_url = self.USER_REPOS_URL % (user or self.user)
+        base_url = '%s?type=%s&per_page=100' % (self.USER_REPOS_URL, repotype)
         page = 1
         while True:
-            r = requests.get('%s?page=%d' % (base_url, page), auth=HTTPBasicAuth(self.user, self.token))
+            r = requests.get('%s&page=%d' % (base_url, page), auth=HTTPBasicAuth(self.user, self.token))
             new = r.json()
             if not new:
                 break
